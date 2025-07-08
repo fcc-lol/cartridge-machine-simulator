@@ -145,9 +145,9 @@ function STLViewer() {
 
         <ConditionalHtml position={[-10.8, 0, 9]}>
           <Html
-            position={[-10.8, -0.25, 8.4]} // Adjust to match your screen's position
+            position={[-11, -0.1, 8.4]} // Adjust to match your screen's position
             transform
-            distanceFactor={12.4} // Adjust for scaling
+            distanceFactor={24.4} // Adjust for scaling - doubled to double the size
             wrapperClass="firmware-iframe"
             style={{
               pointerEvents: "none",
@@ -156,12 +156,12 @@ function STLViewer() {
             }}
           >
             <iframe
-              src="https://cartridge-machine-firmware.fcc.lol"
+              src="https://cartridge-machine-firmware.fcc.lol?app=InfiniteColorFade"
               style={{
-                width: 1024 * 2,
-                height: 768 * 2,
+                width: 1042,
+                height: 772,
                 border: "none",
-                borderRadius: 36,
+                borderRadius: 20,
                 background: "transparent",
                 backfaceVisibility: "hidden"
               }}
