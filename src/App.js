@@ -195,7 +195,7 @@ function AnimatedCartridge({
       const pressTarget = new THREE.Vector3(
         basePosition.x,
         basePosition.y,
-        basePosition.z + 12
+        basePosition.z + 20
       );
 
       current.lerp(pressTarget, speed);
