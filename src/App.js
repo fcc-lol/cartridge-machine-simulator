@@ -106,7 +106,7 @@ function STLViewer() {
         <STLModel url="/resources/case.stl" />
         <VideoScreen videoUrl="/resources/screen.mp4" />
         <OrbitControls
-          enablePan={true}
+          enablePan={false}
           enableZoom={true}
           enableRotate={true}
           minDistance={50}
