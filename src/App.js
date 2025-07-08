@@ -79,7 +79,7 @@ function VideoScreen({ videoUrl }) {
       position={[-10.8, 0, 9]}
       rotation={[Math.PI, Math.PI, Math.PI]}
     >
-      <planeGeometry args={[4 * 16, 3 * 16]} /> {/* Made much smaller */}
+      <planeGeometry args={[4 * 16.5, 3 * 16.5]} /> {/* Made much smaller */}
       <meshBasicMaterial map={videoTexture} />
     </mesh>
   );
