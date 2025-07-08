@@ -4,7 +4,7 @@ import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
-function STLModel({ url }) {
+function STLModel({ url, onLoad }) {
   const meshRef = useRef();
   const [geometry, setGeometry] = useState(null);
 
@@ -13,8 +13,9 @@ function STLModel({ url }) {
     loader.load(url, (geometry) => {
       geometry.computeVertexNormals();
       setGeometry(geometry);
+      onLoad(); // Notify parent that STL is loaded
     });
-  }, [url]);
+  }, [url, onLoad]);
 
   if (!geometry) {
     return null;
@@ -33,7 +34,7 @@ function STLModel({ url }) {
   );
 }
 
-function VideoScreen({ videoUrl }) {
+function VideoScreen({ videoUrl, onLoad }) {
   const meshRef = useRef();
   const [videoTexture, setVideoTexture] = useState(null);
 
@@ -51,7 +52,11 @@ function VideoScreen({ videoUrl }) {
     texture.magFilter = THREE.LinearFilter;
     texture.format = THREE.RGBAFormat;
 
-    setVideoTexture(texture);
+    // Wait for video to be ready
+    video.addEventListener("loadeddata", () => {
+      setVideoTexture(texture);
+      onLoad(); // Notify parent that video is loaded
+    });
 
     // Start playing the video
     video.play().catch((e) => console.log("Video autoplay failed:", e));
@@ -60,7 +65,7 @@ function VideoScreen({ videoUrl }) {
       video.pause();
       video.src = "";
     };
-  }, [videoUrl]);
+  }, [videoUrl, onLoad]);
 
   useFrame(() => {
     if (videoTexture) {
@@ -86,8 +91,46 @@ function VideoScreen({ videoUrl }) {
 }
 
 function STLViewer() {
+  const [stlLoaded, setStlLoaded] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [opacity, setOpacity] = useState(0);
+
+  // Check if both assets are loaded
+  const bothLoaded = stlLoaded && videoLoaded;
+
+  // Fade in effect when both are loaded
+  useEffect(() => {
+    if (bothLoaded) {
+      const timer = setTimeout(() => {
+        setOpacity(1);
+      }, 100); // Small delay for smooth transition
+      return () => clearTimeout(timer);
+    }
+  }, [bothLoaded]);
+
   return (
     <div style={{ width: "100%", height: "100vh" }}>
+      {/* Loading overlay */}
+      {!bothLoaded && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            color: "white",
+            fontSize: "18px"
+          }}
+        >
+          Loading...
+        </div>
+      )}
+
       <Canvas
         camera={{
           position: [0, 0, 100],
@@ -97,14 +140,19 @@ function STLViewer() {
         }}
         style={{
           background:
-            "radial-gradient(circle, rgba(0,0,0) 0%, rgba(20,20,20) 100%)"
+            "radial-gradient(circle, rgba(0,0,0) 0%, rgba(20,20,20) 100%)",
+          opacity: opacity,
+          transition: "opacity 1s ease-in-out"
         }}
       >
         <ambientLight intensity={0.3} />
         <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
-        <STLModel url="/resources/case.stl" />
-        <VideoScreen videoUrl="/resources/screen.mp4" />
+        <STLModel url="/resources/case.stl" onLoad={() => setStlLoaded(true)} />
+        <VideoScreen
+          videoUrl="/resources/screen.mp4"
+          onLoad={() => setVideoLoaded(true)}
+        />
         <OrbitControls
           enablePan={false}
           enableZoom={true}
