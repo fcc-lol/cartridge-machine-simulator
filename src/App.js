@@ -290,27 +290,6 @@ function AnimatedCartridge({
   );
 }
 
-function ConditionalHtml({ children, position }) {
-  const { camera } = useThree();
-  const [isVisible, setIsVisible] = useState(true);
-
-  useFrame(() => {
-    // Calculate the vector from camera to the HTML element position
-    const cameraPos = camera.position;
-    const htmlPos = new THREE.Vector3(...position);
-    const direction = new THREE.Vector3()
-      .subVectors(cameraPos, htmlPos)
-      .normalize();
-
-    // Check if we're looking at the front face (z direction)
-    // If direction.z is positive, we're looking from the front
-    const isFrontFacing = direction.z > 0;
-    setIsVisible(isFrontFacing);
-  });
-
-  return isVisible ? children : null;
-}
-
 function STLViewer() {
   const ROTATION_LIMIT_X_DEGREES = 45; // Horizontal rotation limit
   const ROTATION_LIMIT_Y_DEGREES = 25; // Vertical rotation limit
@@ -513,8 +492,7 @@ function STLViewer() {
         }}
       >
         <ambientLight intensity={0.3} />
-        <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-        <pointLight position={[-10, -10, -5]} intensity={0.5} />
+        <directionalLight position={[0, 15, 12]} intensity={1} castShadow />
 
         <STLModel
           url="/resources/case.stl"
@@ -577,40 +555,36 @@ function STLViewer() {
           );
         })}
 
-        <ConditionalHtml position={[-10.8, 0, 9]}>
-          <Html
-            position={[-11, -0.1, 8.4]} // Adjust to match your screen's position
-            transform
-            distanceFactor={24.4} // Adjust for scaling - doubled to double the size
-            wrapperClass="firmware-iframe"
+        <Html
+          position={[-11, -0.1, 8.4]} // Adjust to match your screen's position
+          transform
+          distanceFactor={24.4} // Adjust for scaling - doubled to double the size
+          wrapperClass="firmware-iframe"
+          style={{
+            pointerEvents: "none",
+            userSelect: "none",
+            backfaceVisibility: "hidden"
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onPointerEnter={(e) => e.stopPropagation()}
+          onPointerLeave={(e) => e.stopPropagation()}
+        >
+          <iframe
+            src={
+              urls[activeCartridgeIndex !== null ? activeCartridgeIndex + 1 : 0]
+            }
             style={{
-              pointerEvents: "none",
-              userSelect: "none",
-              backfaceVisibility: "hidden"
+              width: 1048,
+              height: 772,
+              border: "none",
+              borderRadius: 20,
+              background: "transparent",
+              backfaceVisibility: "hidden",
+              pointerEvents: "none"
             }}
-            onClick={(e) => e.stopPropagation()}
-            onPointerEnter={(e) => e.stopPropagation()}
-            onPointerLeave={(e) => e.stopPropagation()}
-          >
-            <iframe
-              src={
-                urls[
-                  activeCartridgeIndex !== null ? activeCartridgeIndex + 1 : 0
-                ]
-              }
-              style={{
-                width: 1048,
-                height: 772,
-                border: "none",
-                borderRadius: 20,
-                background: "transparent",
-                backfaceVisibility: "hidden",
-                pointerEvents: "none"
-              }}
-              title="screen"
-            />
-          </Html>
-        </ConditionalHtml>
+            title="screen"
+          />
+        </Html>
 
         <OrbitControls
           enablePan={false}
