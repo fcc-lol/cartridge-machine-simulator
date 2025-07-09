@@ -350,7 +350,7 @@ function AnimatedCartridge({
   );
 }
 
-function STLViewer() {
+function Simulator() {
   const ROTATION_LIMIT_X_DEGREES = 45; // Horizontal rotation limit
   const ROTATION_LIMIT_Y_DEGREES = 25; // Vertical rotation limit
   const [caseLoaded, setCaseLoaded] = useState(false);
@@ -380,16 +380,16 @@ function STLViewer() {
   // Define cartridge configuration with colors and apps
   const cartridgeConfig = [
     {
-      color: "#FF4848",
+      color: "#2D8FFF",
       app: "WholeEarthSatelliteImage"
+    },
+    {
+      color: "#FF4848",
+      app: "InfiniteColorFade"
     },
     {
       color: "#9DFFA1",
       app: "AircraftOverhead"
-    },
-    {
-      color: "#2D8FFF",
-      app: "InfiniteColorFade"
     },
     {
       color: "#FFD788",
@@ -702,4 +702,4 @@ function STLViewer() {
   );
 }
 
-export default STLViewer;
+export default Simulator;
