@@ -402,7 +402,7 @@ function Simulator() {
   // Get API key from URL query params
   const getApiKey = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get("fccApiKey");
+    return urlParams.get("fccApiKey") || "DEMO";
   };
 
   // Create URLs array with API key if available
