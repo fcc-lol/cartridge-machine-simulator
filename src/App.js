@@ -6,6 +6,66 @@ import { Html } from "@react-three/drei";
 
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
+// Camera reset animation component
+function CameraResetAnimation({ isAnimating, onComplete }) {
+  const { camera } = useThree();
+  const targetPosition = useRef(new THREE.Vector3(0, 0, 100));
+  const targetRotation = useRef(new THREE.Euler(0, 0, 0));
+  const startPosition = useRef(new THREE.Vector3());
+  const startRotation = useRef(new THREE.Euler());
+  const animationProgress = useRef(0);
+
+  useEffect(() => {
+    if (isAnimating) {
+      // Store starting position and rotation
+      startPosition.current.copy(camera.position);
+      startRotation.current.copy(camera.rotation);
+      animationProgress.current = 0;
+    }
+  }, [isAnimating, camera]);
+
+  useFrame(() => {
+    if (isAnimating) {
+      const speed = 0.025; // Slower animation speed for smoother movement
+      animationProgress.current += speed;
+
+      if (animationProgress.current >= 1) {
+        // Animation complete
+        camera.position.copy(targetPosition.current);
+        camera.rotation.copy(targetRotation.current);
+        animationProgress.current = 1;
+        onComplete();
+      } else {
+        // Smooth interpolation
+        const t = animationProgress.current;
+
+        camera.position.lerpVectors(
+          startPosition.current,
+          targetPosition.current,
+          t
+        );
+        camera.rotation.x = THREE.MathUtils.lerp(
+          startRotation.current.x,
+          targetRotation.current.x,
+          t
+        );
+        camera.rotation.y = THREE.MathUtils.lerp(
+          startRotation.current.y,
+          targetRotation.current.y,
+          t
+        );
+        camera.rotation.z = THREE.MathUtils.lerp(
+          startRotation.current.z,
+          targetRotation.current.z,
+          t
+        );
+      }
+    }
+  });
+
+  return null;
+}
+
 function STLModel({
   url,
   onLoad,
@@ -303,6 +363,12 @@ function STLViewer() {
   const [cartridgeBeingActivated, setCartridgeBeingActivated] = useState(null);
   const [pendingCartridgeIndex, setPendingCartridgeIndex] = useState(null);
 
+  // Ref for OrbitControls
+  const controlsRef = useRef();
+
+  // Camera reset animation state
+  const [isResetAnimating, setIsResetAnimating] = useState(false);
+
   // Define positions for 4 cartridges (bottom 4 slots)
   const cartridgePositions = [
     [-10.8, -13.2, 0], // 2nd slot from bottom
@@ -454,6 +520,30 @@ function STLViewer() {
     }
   }, [allLoaded]);
 
+  // Add keyboard event listener for space bar
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.code === "Space") {
+        event.preventDefault();
+        if (!isResetAnimating) {
+          setIsResetAnimating(true);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isResetAnimating]);
+
+  // Handle reset animation completion
+  const handleResetComplete = () => {
+    setIsResetAnimating(false);
+    // Reset OrbitControls to sync with new camera position
+    if (controlsRef.current) {
+      controlsRef.current.reset();
+    }
+  };
+
   return (
     <div style={{ width: "100%", height: "100vh" }}>
       {/* Loading overlay */}
@@ -493,6 +583,11 @@ function STLViewer() {
       >
         <ambientLight intensity={0.3} />
         <directionalLight position={[0, 15, 12]} intensity={1} castShadow />
+
+        <CameraResetAnimation
+          isAnimating={isResetAnimating}
+          onComplete={handleResetComplete}
+        />
 
         <STLModel
           url="/resources/case.stl"
@@ -587,6 +682,7 @@ function STLViewer() {
         </Html>
 
         <OrbitControls
+          ref={controlsRef}
           enablePan={false}
           enableZoom={true}
           enableRotate={true}
