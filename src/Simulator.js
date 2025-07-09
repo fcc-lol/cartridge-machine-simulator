@@ -9,7 +9,9 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 // Camera reset animation component
 function CameraResetAnimation({ isAnimating, onComplete }) {
   const { camera } = useThree();
-  const targetPosition = useRef(new THREE.Vector3(0, 0, 100));
+  const targetPosition = useRef(
+    new THREE.Vector3(0, 0, window.innerWidth <= 768 ? 300 : 100)
+  );
   const targetRotation = useRef(new THREE.Euler(0, 0, 0));
   const startPosition = useRef(new THREE.Vector3());
   const startRotation = useRef(new THREE.Euler());
@@ -569,7 +571,7 @@ function Simulator() {
 
       <Canvas
         camera={{
-          position: [0, 0, 100],
+          position: [0, 0, window.innerWidth <= 768 ? 300 : 100],
           fov: 50,
           near: 0.1,
           far: 1000
