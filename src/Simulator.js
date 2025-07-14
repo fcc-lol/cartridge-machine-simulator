@@ -500,17 +500,11 @@ function Simulator() {
   const handleCartridgeLoaded = () => {
     if (!cartridgeLoaded) {
       setCartridgeLoaded(true);
-      console.log("Cartridge STL file loaded");
     }
   };
 
   // Check if all assets are loaded
   const allLoaded = caseLoaded && cartridgeLoaded;
-
-  // Add debugging for loading state
-  console.log(
-    `Loading state: case=${caseLoaded}, cartridge=${cartridgeLoaded}, allLoaded=${allLoaded}`
-  );
 
   // Fade in effect when all are loaded
   useEffect(() => {
