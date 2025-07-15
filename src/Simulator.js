@@ -413,11 +413,11 @@ function Simulator() {
     const baseUrl = "https://cartridge-machine-firmware.fcc.lol";
 
     const urls = [
-      baseUrl, // Default/empty cartridge (when no cartridge is active)
+      apiKey ? `${baseUrl}/?fccApiKey=${apiKey}` : baseUrl, // Default/empty cartridge (when no cartridge is active)
       ...cartridgeConfig.map((cartridge) =>
         apiKey
-          ? `${baseUrl}/?fccApiKey=${apiKey}&app=${cartridge.app}`
-          : baseUrl
+          ? `${baseUrl}/?fccApiKey=${apiKey}#${cartridge.app}`
+          : `${baseUrl}#${cartridge.app}`
       )
     ];
 
