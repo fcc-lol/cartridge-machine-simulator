@@ -631,7 +631,7 @@ function Simulator() {
           return (
             <AnimatedCartridge
               key={index}
-              url="/resources/cartrdige.stl"
+              url="/resources/cartridge.stl"
               onLoad={handleCartridgeLoaded}
               initialPosition={initialPosition}
               targetPosition={targetPosition}
