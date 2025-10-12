@@ -556,8 +556,7 @@ function Simulator() {
             justifyContent: "center",
             zIndex: 1000,
             color: "white",
-            fontSize: "18px",
-            marginTop: "-1rem"
+            fontSize: "18px"
           }}
         >
           Loading...
