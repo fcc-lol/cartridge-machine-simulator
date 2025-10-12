@@ -387,7 +387,7 @@ function Simulator() {
     },
     {
       color: "#FF4848",
-      app: "InfiniteColorFade"
+      app: "Moments"
     },
     {
       color: "#9DFFA1",
