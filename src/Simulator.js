@@ -383,11 +383,11 @@ function Simulator() {
   const cartridgeConfig = [
     {
       color: "#2D8FFF",
-      app: "WholeEarthSatelliteImage"
+      app: "LiveCameras"
     },
     {
       color: "#FF4848",
-      app: "Moments"
+      app: "SunDashboard"
     },
     {
       color: "#9DFFA1",
@@ -395,7 +395,7 @@ function Simulator() {
     },
     {
       color: "#FFD788",
-      app: "USWeatherMap"
+      app: "Moments"
     }
   ];
 
