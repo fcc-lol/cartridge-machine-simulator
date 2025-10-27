@@ -407,6 +407,12 @@ function Simulator() {
     return urlParams.get("fccApiKey") || "DEMO";
   };
 
+  // Get app name from URL query params
+  const getAppFromUrl = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("app");
+  };
+
   // Create URLs array with API key if available
   const createUrls = () => {
     const apiKey = getApiKey();
@@ -661,9 +667,21 @@ function Simulator() {
           onPointerLeave={(e) => e.stopPropagation()}
         >
           <iframe
-            src={
-              urls[activeCartridgeIndex !== null ? activeCartridgeIndex + 1 : 0]
-            }
+            src={(() => {
+              const appFromUrl = getAppFromUrl();
+              if (appFromUrl) {
+                // Use app from URL parameter
+                const apiKey = getApiKey();
+                const baseUrl = "https://cartridge-machine-firmware.fcc.lol";
+                return apiKey
+                  ? `${baseUrl}/?fccApiKey=${apiKey}#${appFromUrl}`
+                  : `${baseUrl}#${appFromUrl}`;
+              }
+              // Default behavior: use cartridge-based URL
+              return urls[
+                activeCartridgeIndex !== null ? activeCartridgeIndex + 1 : 0
+              ];
+            })()}
             style={{
               width: 1048,
               height: 772,
